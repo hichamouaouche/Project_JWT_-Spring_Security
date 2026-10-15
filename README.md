@@ -899,36 +899,6 @@ jwt.expiration=3600000
 4. **Rafraîchissement de Token** : Implémentation des refresh tokens
 5. **Gestion des Rôles** : Implémentation détaillée des rôles (USER, ADMIN)
 
-### Problèmes Identifiés dans le Code Existant ⚠️
-
-1. **JwtService.java - Ligne 20**:
-   ```java
-   @Value("jwt.secret")  // ❌ Incorrect
-   ```
-   Devrait être:
-   ```java
-   @Value("${jwt.secret}")  // ✅ Correct
-   ```
-
-2. **CustomerUserDetailsService.java**:
-   - Annotation `@Service` manquante
-   - Spring ne pourra pas détecter et injecter ce bean automatiquement
-
-3. **Noms de méthodes confus dans JwtService**:
-   - `isTokenExpired(String token, UserDetails)`: Vérifie si le token appartient à l'utilisateur (pas l'expiration)
-   - `isTokenExpired(String token)`: Vérifie l'expiration du token
-   - Devrait être renommé pour plus de clarté
-
-4. **Pas de hachage de mot de passe**:
-   - Les mots de passe sont stockés en clair
-   - Risque de sécurité critique
-
-5. **Pas de gestion des exceptions**:
-   - Pas de try-catch lors de l'analyse du token
-   - Risque d'exceptions non gérées en production
-
----
-
 ## Sécurité : Analyse et Recommandations
 
 ### JWT (JSON Web Tokens)
@@ -1236,9 +1206,7 @@ JwtSpringApplication est un projet éducatif démontrant l'implémentation d'un 
 
 1. **Prioriser la sécurité** : Implémenter BCrypt pour les mots de passe avant toute autre fonctionnalité
 2. **Compléter l'authentification** : Implémenter AuthController et SecurityConfiguration
-3. **Ajouter des tests** : Écrire des tests unitaires et d'intégration
-4. **Corriger les bugs** : Résoudre les problèmes identifiés dans le code existant
-5. **Documenter l'API** : Utiliser Swagger/OpenAPI pour documenter les endpoints
+3. **Ajouter des tests** : Écrire des tests unitaires et d'intégration.
 
 Ce projet fournit une excellente base pour comprendre l'authentification JWT avec Spring Security et peut être étendu pour devenir une application de production complète et sécurisée.
 
