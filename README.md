@@ -1,110 +1,110 @@
-# JwtSpringApplication - Technical Report
+# JwtSpringApplication - Rapport Technique
 
-## Description and Context
+## Description et Contexte
 
-JwtSpringApplication is a Spring Boot application implementing a JWT (JSON Web Token) based authentication system. This project is part of the Distributed Systems Security course (SDIA - 2nd Year) at ENSET Mohammedia and demonstrates the integration of Spring Security with JWT to secure a REST API.
+JwtSpringApplication est une application Spring Boot implémentant un système d'authentification basé sur JWT (JSON Web Token). Ce projet fait partie du cours de Sécurité des Systèmes Distribués (SDIA - 2ème année) à l'ENSET Mohammedia et démontre l'intégration de Spring Security avec JWT pour sécuriser une API REST.
 
-### Educational Objectives
+### Objectifs Pédagogiques
 
-This project aims to:
-- Understand how JWT authentication works
-- Implement a security system with Spring Security
-- Master token generation and validation
-- Design a secure REST architecture
-- Apply application security best practices
+Ce projet vise à :
+- Comprendre le fonctionnement de l'authentification JWT
+- Implémenter un système de sécurité avec Spring Security
+- Maîtriser la génération et la validation de tokens
+- Concevoir une architecture REST sécurisée
+- Appliquer les meilleures pratiques de sécurité des applications
 
-## Technologies Used
+## Technologies Utilisées
 
-- **Java**: 21
-- **Spring Boot**: 4.1.1
-- **Spring Security**: For authentication and authorization management
-- **Spring Data JPA**: For data persistence
-- **JWT (JJWT)**: 0.13.0 - For token generation and validation
-- **H2 Database**: In-memory database for development
-- **Lombok**: To reduce boilerplate code
-- **Maven**: Dependency management
+- **Java** : 21
+- **Spring Boot** : 4.1.1
+- **Spring Security** : Pour la gestion de l'authentification et de l'autorisation
+- **Spring Data JPA** : Pour la persistance des données
+- **JWT (JJWT)** : 0.13.0 - Pour la génération et la validation de tokens
+- **Base de données H2** : Base de données en mémoire pour le développement
+- **Lombok** : Pour réduire le code boilerplate
+- **Maven** : Gestion des dépendances
 
-## Project Architecture
+## Architecture du Projet
 
-### Architecture Overview
+### Vue d'ensemble de l'Architecture
 
-The application follows a typical Spring Boot layered architecture with clear separation of concerns:
+L'application suit une architecture en couches typique de Spring Boot avec une séparation claire des responsabilités :
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     Client (Frontend)                       │
-│                  (Web Application / Mobile)                 │
+│                  (Application Web / Mobile)                 │
 └────────────────────────┬────────────────────────────────────┘
                          │ HTTP/REST
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                  API REST (Spring Boot)                      │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │              Controllers (To Implement)               │  │
+│  │              Controllers (À Implémenter)              │  │
 │  │  - AuthController (/register, /login)                │  │
-│  │  - UserController (protected endpoints)              │  │
+│  │  - UserController (endpoints protégés)               │  │
 │  └──────────────────────┬───────────────────────────────┘  │
 │                         │                                    │
 │  ┌──────────────────────▼───────────────────────────────┐  │
-│  │              Security Filter Chain                    │  │
-│  │  - JwtAuthenticationFilter (To Implement)            │  │
-│  │  - SecurityConfiguration (To Implement)              │  │
+│  │              Chaîne de Filtres de Sécurité             │  │
+│  │  - JwtAuthenticationFilter (À Implémenter)           │  │
+│  │  - SecurityConfiguration (À Implémenter)             │  │
 │  └──────────────────────┬───────────────────────────────┘  │
 │                         │                                    │
 │  ┌──────────────────────▼───────────────────────────────┐  │
-│  │                   Services Layer                       │  │
-│  │  - JwtService (JWT Generation/Validation)            │  │
-│  │  - CustomerUserDetailsService (User Loading)          │  │
+│  │                   Couche Services                     │  │
+│  │  - JwtService (Génération/Validation JWT)            │  │
+│  │  - CustomerUserDetailsService (Chargement Utilisateur)│  │
 │  └──────────────────────┬───────────────────────────────┘  │
 │                         │                                    │
 │  ┌──────────────────────▼───────────────────────────────┐  │
-│  │                 Repository Layer                       │  │
-│  │  - UserRepository (JPA Repository)                    │  │
+│  │                 Couche Repository                    │  │
+│  │  - UserRepository (Repository JPA)                   │  │
 │  └──────────────────────┬───────────────────────────────┘  │
 │                         │                                    │
 │  ┌──────────────────────▼───────────────────────────────┐  │
-│  │                  Database Layer                        │  │
-│  │  - H2 Database (In-Memory)                             │  │
-│  │  - Table: users                                        │  │
+│  │                  Couche Base de Données               │  │
+│  │  - Base de données H2 (En Mémoire)                   │  │
+│  │  - Table : users                                      │  │
 │  └──────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Package Structure
+### Structure des Packages
 
 ```
 hiou.hicham.jwtspringapplication/
-├── JwtSpringApplication.java       # Main application class (Entry point)
-├── dto/                            # Data Transfer Objects
-│   ├── AuthResponse.java           # Authentication response containing JWT token
-│   ├── LoginRequest.java           # Login request (email, password)
-│   └── RegisterRequest.java        # Registration request (email, password)
+├── JwtSpringApplication.java       # Classe principale de l'application (Point d'entrée)
+├── dto/                            # Objets de Transfert de Données
+│   ├── AuthResponse.java           # Réponse d'authentification contenant le token JWT
+│   ├── LoginRequest.java           # Requête de connexion (email, mot de passe)
+│   └── RegisterRequest.java        # Requête d'inscription (email, mot de passe)
 ├── entity/
-│   └── AppUser.java                # User entity mapped to "users" table
+│   └── AppUser.java                # Entité utilisateur mappée à la table "users"
 ├── repository/
-│   └── UserRepository.java         # JPA interface for CRUD operations
+│   └── UserRepository.java         # Interface JPA pour les opérations CRUD
 └── service/
-    ├── JwtService.java             # Service for JWT token generation and validation
-    └── CustomerUserDetailsService.java # Custom service to load user details
+    ├── JwtService.java             # Service pour la génération et la validation de tokens JWT
+    └── CustomerUserDetailsService.java # Service personnalisé pour charger les détails utilisateur
 ```
 
-### Data Flow
+### Flux de Données
 
-The data flow in the application follows the MVC (Model-View-Controller) pattern adapted for a REST API:
+Le flux de données dans l'application suit le pattern MVC (Modèle-Vue-Contrôleur) adapté pour une API REST :
 
-1. **Client Request** → Controller (REST Endpoint)
-2. **Controller** → Service (Business Logic)
-3. **Service** → Repository (Data Access)
-4. **Repository** → Database (H2)
-5. **Response** follows the reverse path
+1. **Requête Client** → Contrôleur (Endpoint REST)
+2. **Contrôleur** → Service (Logique Métier)
+3. **Service** → Repository (Accès aux Données)
+4. **Repository** → Base de Données (H2)
+5. **Réponse** suit le chemin inverse
 
-## Main Components - Detailed Analysis
+## Composants Principaux - Analyse Détaillée
 
-### 1. Entity: AppUser
+### 1. Entité : AppUser
 
-**File**: `src/main/java/hiou/hicham/jwtspringapplication/entity/AppUser.java`
+**Fichier** : `src/main/java/hiou/hicham/jwtspringapplication/entity/AppUser.java`
 
-The `AppUser` entity represents a user in the system and is mapped to the "users" table in the database.
+L'entité `AppUser` représente un utilisateur dans le système et est mappée à la table "users" dans la base de données.
 
 ```java
 @Entity
@@ -122,33 +122,33 @@ public class AppUser {
 }
 ```
 
-**Annotations Explained** :
-- `@Entity`: Indicates that this class is a JPA entity, mapped to a database table
-- `@Table(name = "users")`: Specifies the table name in the database
-- `@Id`: Marks the field as primary key
-- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Indicates that the ID is auto-generated by the database
-- `@Column(unique = true)`: Ensures that the email is unique in the database
-- `@Data` (Lombok): Automatically generates getters, setters, toString, equals, hashCode
-- `@AllArgsConstructor` (Lombok): Generates a constructor with all arguments
-- `@NoArgsConstructor` (Lombok): Generates a no-argument constructor
+**Explication des Annotations** :
+- `@Entity` : Indique que cette classe est une entité JPA, mappée à une table de base de données
+- `@Table(name = "users")` : Spécifie le nom de la table dans la base de données
+- `@Id` : Marque le champ comme clé primaire
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)` : Indique que l'ID est auto-généré par la base de données
+- `@Column(unique = true)` : Assure que l'email est unique dans la base de données
+- `@Data` (Lombok) : Génère automatiquement les getters, setters, toString, equals, hashCode
+- `@AllArgsConstructor` (Lombok) : Génère un constructeur avec tous les arguments
+- `@NoArgsConstructor` (Lombok) : Génère un constructeur sans arguments
 
-**Attributes** :
-- `id`: Unique auto-generated identifier (Long)
-- `email`: User email address (String, unique)
-- `password`: User password (String, should be hashed)
-- `role`: User role for authorization management (String)
+**Attributs** :
+- `id` : Identifiant unique auto-généré (Long)
+- `email` : Adresse email de l'utilisateur (String, unique)
+- `password` : Mot de passe de l'utilisateur (String, devrait être haché)
+- `role` : Rôle de l'utilisateur pour la gestion de l'autorisation (String)
 
-**Security Note**: Currently, the password is stored in plain text. In production, it must be hashed with BCrypt or another secure hashing algorithm.
+**Note de Sécurité** : Actuellement, le mot de passe est stocké en clair. En production, il doit être haché avec BCrypt ou un autre algorithme de hachage sécurisé.
 
 ---
 
-### 2. DTOs (Data Transfer Objects)
+### 2. DTOs (Objets de Transfert de Données)
 
-DTOs are used to transfer data between application layers without directly exposing entities.
+Les DTOs sont utilisés pour transférer des données entre les couches de l'application sans exposer directement les entités.
 
 #### 2.1 LoginRequest
 
-**File**: `src/main/java/hiou/hicham/jwtspringapplication/dto/LoginRequest.java`
+**Fichier** : `src/main/java/hiou/hicham/jwtspringapplication/dto/LoginRequest.java`
 
 ```java
 public record LoginRequest(
@@ -157,17 +157,17 @@ public record LoginRequest(
 ) {}
 ```
 
-**Explanation** :
-- Uses a Java `record` (Java 14+) for an immutable DTO
-- Contains login credentials required for authentication
-- `email`: User identifier
-- `password`: Password for verification
+**Explication** :
+- Utilise un `record` Java (Java 14+) pour un DTO immuable
+- Contient les identifiants de connexion requis pour l'authentification
+- `email` : Identifiant de l'utilisateur
+- `password` : Mot de passe pour la vérification
 
-**Usage**: Sent by the client during a login attempt to the `/login` endpoint.
+**Utilisation** : Envoyé par le client lors d'une tentative de connexion à l'endpoint `/login`.
 
 #### 2.2 RegisterRequest
 
-**File**: `src/main/java/hiou/hicham/jwtspringapplication/dto/RegisterRequest.java`
+**Fichier** : `src/main/java/hiou/hicham/jwtspringapplication/dto/RegisterRequest.java`
 
 ```java
 public record RegisterRequest(
@@ -176,34 +176,34 @@ public record RegisterRequest(
 ) {}
 ```
 
-**Explanation** :
-- Similar to LoginRequest but used for registration
-- Contains information needed to create a new account
-- `email`: Email address that will serve as unique identifier
-- `password`: Password chosen by the user
+**Explication** :
+- Similaire à LoginRequest mais utilisé pour l'inscription
+- Contient les informations nécessaires pour créer un nouveau compte
+- `email` : Adresse email qui servira d'identifiant unique
+- `password` : Mot de passe choisi par l'utilisateur
 
-**Usage**: Sent by the client during registration to the `/register` endpoint.
+**Utilisation** : Envoyé par le client lors de l'inscription à l'endpoint `/register`.
 
 #### 2.3 AuthResponse
 
-**File**: `src/main/java/hiou/hicham/jwtspringapplication/dto/AuthResponse.java`
+**Fichier** : `src/main/java/hiou/hicham/jwtspringapplication/dto/AuthResponse.java`
 
 ```java
 public record AuthResponse(
         String token) {}
 ```
 
-**Explanation** :
-- Contains the JWT token generated after successful authentication
-- `token`: The signed JWT that the client must store and send in subsequent requests
+**Explication** :
+- Contient le token JWT généré après une authentification réussie
+- `token` : Le JWT signé que le client doit stocker et envoyer dans les requêtes suivantes
 
-**Usage**: Returned to the client after successful login or registration. The client must include this token in the `Authorization: Bearer <token>` header to access protected endpoints.
+**Utilisation** : Retourné au client après une connexion ou une inscription réussie. Le client doit inclure ce token dans l'en-tête `Authorization: Bearer <token>` pour accéder aux endpoints protégés.
 
 ---
 
-### 3. Repository: UserRepository
+### 3. Repository : UserRepository
 
-**File**: `src/main/java/hiou/hicham/jwtspringapplication/repository/UserRepository.java`
+**Fichier** : `src/main/java/hiou/hicham/jwtspringapplication/repository/UserRepository.java`
 
 ```java
 @Repository
@@ -214,20 +214,20 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
 }
 ```
 
-**Explanation** :
-- `@Repository`: Indicates that this is a data access layer component
-- `extends JpaRepository<AppUser, Long>`: Inherits basic CRUD methods (save, findAll, findById, delete, etc.)
-- `AppUser`: Entity type
-- `Long`: Identifier type
+**Explication** :
+- `@Repository` : Indique qu'il s'agit d'un composant de la couche d'accès aux données
+- `extends JpaRepository<AppUser, Long>` : Hérite des méthodes CRUD de base (save, findAll, findById, delete, etc.)
+- `AppUser` : Type d'entité
+- `Long` : Type d'identifiant
 
-**Custom Methods** :
-- `Optional<AppUser> findByEmail(String email)`: Searches for a user by email. Returns an `Optional` to handle the case where the user doesn't exist.
-- `boolean existsByEmail(String email)`: Checks if a user with this email already exists. Useful to avoid duplicates during registration.
+**Méthodes Personnalisées** :
+- `Optional<AppUser> findByEmail(String email)` : Recherche un utilisateur par email. Retourne un `Optional` pour gérer le cas où l'utilisateur n'existe pas.
+- `boolean existsByEmail(String email)` : Vérifie si un utilisateur avec cet email existe déjà. Utile pour éviter les doublons lors de l'inscription.
 
-**Advantages of Spring Data JPA** :
-- No manual implementation needed, Spring automatically generates SQL
-- Query methods derived from method names
-- Support for pagination, sorting, and complex queries
+**Avantages de Spring Data JPA** :
+- Aucune implémentation manuelle nécessaire, Spring génère automatiquement le SQL
+- Méthodes de requête dérivées des noms de méthodes
+- Support pour la pagination, le tri et les requêtes complexes
 
 ---
 
@@ -235,9 +235,9 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
 
 #### 4.1 JwtService
 
-**File**: `src/main/java/hiou/hicham/jwtspringapplication/service/JwtService.java`
+**Fichier** : `src/main/java/hiou/hicham/jwtspringapplication/service/JwtService.java`
 
-Service responsible for JWT token generation, validation, and information extraction.
+Service responsable de la génération, de la validation et de l'extraction d'informations des tokens JWT.
 
 ```java
 @Service
@@ -285,47 +285,45 @@ public class JwtService {
 }
 ```
 
-**Detailed Explanation** :
+**Explication Détaillée** :
 
 **Configuration** :
-- `@Value("jwt.secret")`: Injection of the secret key from application.properties (note: there is a bug here, should be `${jwt.secret}`)
-- `@Value("${jwt.expiration}")`: Injection of the token expiration time in milliseconds
+- `@Value("${jwt.secret}")` : Injection de la clé secrète depuis application.properties
+- `@Value("${jwt.expiration}")` : Injection du temps d'expiration du token en millisecondes
 
-**Methods** :
+**Méthodes** :
 
-1. **getSecretKey()**:
-   - Decodes the Base64-encoded secret key
-   - Creates an HMAC-SHA key to sign tokens
-   - Uses symmetric signature algorithm
+1. **getSecretKey()** :
+   - Décode la clé secrète encodée en Base64
+   - Crée une clé HMAC-SHA pour signer les tokens
+   - Utilise un algorithme de signature symétrique
 
-2. **generateToken(UserDetails userDetails)**:
-   - Generates a new JWT token for the user
-   - **subject**: User's email (used as identifier)
-   - **issuedAt**: Token generation date
-   - **expiration**: Expiration date (current date + jwtExpiration)
-   - **signWith**: Signs the token with the secret key
-   - **compact**: Builds and serializes the token to String
+2. **generateToken(UserDetails userDetails)** :
+   - Génère un nouveau token JWT pour l'utilisateur
+   - **subject** : Email de l'utilisateur (utilisé comme identifiant)
+   - **issuedAt** : Date de génération du token
+   - **expiration** : Date d'expiration (date actuelle + jwtExpiration)
+   - **signWith** : Signe le token avec la clé secrète
+   - **compact** : Construit et sérialise le token en String
 
-3. **extractUsername(String token)**:
-   - Extracts the subject (email) from the token
-   - Useful to identify the user from the token
+3. **extractUsername(String token)** :
+   - Extrait le sujet (email) du token
+   - Utile pour identifier l'utilisateur à partir du token
 
-4. **extractAllClaimsFromToken(String token)**:
-   - Parses and verifies the token signature
-   - Extracts all claims (information) contained in the token
-   - Returns the Claims object containing subject, issuedAt, expiration, etc.
+4. **extractAllClaimsFromToken(String token)** :
+   - Analyse et vérifie la signature du token
+   - Extrait tous les claims (informations) contenus dans le token
+   - Retourne l'objet Claims contenant subject, issuedAt, expiration, etc.
 
-5. **isTokenExpired(String token, UserDetails userDetails)**:
-   - Checks if the token belongs to the given user
-   - Compares the username extracted from the token with UserDetails
-   - **Note**: The method name is misleading, it should be called `isTokenValidForUser`
+5. **isTokenValidForUser(String token, UserDetails userDetails)** :
+   - Vérifie si le token appartient à l'utilisateur donné
+   - Compare le nom d'utilisateur extrait du token avec UserDetails
 
-6. **isTokenExpired(String token)**:
-   - Checks if the token is expired
-   - Compares the expiration date with the current date
-   - **Note**: The method name is misleading, it should be called `isTokenExpired` (returns true if expired)
+6. **isTokenExpired(String token)** :
+   - Vérifie si le token est expiré
+   - Compare la date d'expiration avec la date actuelle
 
-**Structure of a Generated JWT Token** :
+**Structure d'un Token JWT Généré** :
 ```
 Header.Payload.Signature
 
@@ -334,16 +332,15 @@ Payload: {"sub":"email@example.com","iat":1234567890,"exp":1234567890+3600000}
 Signature: HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret)
 ```
 
-**Identified Issues** :
-- Line 20: `@Value("jwt.secret")` should be `@Value("${jwt.secret}")` to read the property correctly
-- Confusing method names (`isTokenExpired` with two different signatures)
-- No exception handling during token parsing
+**Problèmes Identifiés** :
+- Noms de méthodes confus (`isTokenExpired` avec deux signatures différentes)
+- Aucune gestion d'exceptions lors de l'analyse du token
 
 ---
 
 #### 4.2 CustomerUserDetailsService
 
-**File**: `src/main/java/hiou/hicham/jwtspringapplication/service/CustomerUserDetailsService.java`
+**Fichier** : `src/main/java/hiou/hicham/jwtspringapplication/service/CustomerUserDetailsService.java`
 
 ```java
 public class CustomerUserDetailsService implements UserDetailsService {
@@ -367,48 +364,48 @@ public class CustomerUserDetailsService implements UserDetailsService {
 }
 ```
 
-**Detailed Explanation** :
+**Explication Détaillée** :
 
-**UserDetailsService Interface** :
-- Spring Security interface for loading user details
-- `loadUserByUsername` method is automatically called by Spring Security during authentication
-- Must return a `UserDetails` object containing information needed for authentication
+**Interface UserDetailsService** :
+- Interface Spring Security pour charger les détails de l'utilisateur
+- La méthode `loadUserByUsername` est appelée automatiquement par Spring Security lors de l'authentification
+- Doit retourner un objet `UserDetails` contenant les informations nécessaires pour l'authentification
 
-**How It Works** :
+**Fonctionnement** :
 
-1. **Dependency Injection** :
-   - `UserRepository` injected via constructor
-   - Recommended pattern for testing and immutability
+1. **Injection de Dépendances** :
+   - `UserRepository` injecté via le constructeur
+   - Pattern recommandé pour les tests et l'immuabilité
 
 2. **loadUserByUsername(String email)** :
-   - Searches for the user in the database by email
-   - If not found, throws `UsernameNotFoundException`
-   - If found, builds a Spring Security `UserDetails` object
+   - Recherche l'utilisateur dans la base de données par email
+   - Si non trouvé, lance `UsernameNotFoundException`
+   - Si trouvé, construit un objet Spring Security `UserDetails`
 
-3. **Building UserDetails** :
-   - `username`: User's email (used as identifier)
-   - `password`: User's hashed password
-   - `roles`: User's roles for authorization
-   - The `User.builder()` creates a default UserDetails implementation
+3. **Construction de UserDetails** :
+   - `username` : Email de l'utilisateur (utilisé comme identifiant)
+   - `password` : Mot de passe haché de l'utilisateur
+   - `roles` : Rôles de l'utilisateur pour l'autorisation
+   - Le `User.builder()` crée une implémentation UserDetails par défaut
 
-**Integration with Spring Security** :
-- This service will be used by `DaoAuthenticationProvider`
-- Spring Security uses it to:
-  - Verify credentials during login
-  - Load user authorizations (roles)
-  - Build the security context (SecurityContext)
+**Intégration avec Spring Security** :
+- Ce service sera utilisé par `DaoAuthenticationProvider`
+- Spring Security l'utilise pour :
+  - Vérifier les identifiants lors de la connexion
+  - Charger les autorisations utilisateur (rôles)
+  - Construire le contexte de sécurité (SecurityContext)
 
-**Note**: The `@Service` annotation is missing on this class, it should be added so Spring can detect and inject it.
+**Note** : L'annotation `@Service` est manquante sur cette classe, elle devrait être ajoutée pour que Spring puisse la détecter et l'injecter.
 
-## Authentication and Registration Flow
+## Flux d'Authentification et d'Inscription
 
-### 1. Registration Process (Register)
+### 1. Processus d'Inscription (Register)
 
-**Planned Endpoint**: `POST /api/auth/register`
+**Endpoint Implémenté** : `POST /auth/register`
 
-**Description**: Registration allows a new user to create an account in the system.
+**Description** : L'inscription permet à un nouvel utilisateur de créer un compte dans le système.
 
-#### Registration Process Steps
+#### Étapes du Processus d'Inscription
 
 ```
 ┌─────────────┐         ┌──────────────┐         ┌─────────────┐         ┌─────────────┐
@@ -450,11 +447,11 @@ public class CustomerUserDetailsService implements UserDetailsService {
        │  (localStorage/cookie) │                       │                       │
 ```
 
-#### Planned Implementation (AuthController)
+#### Implémentation Actuelle (AuthController)
 
 ```java
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     @PostMapping("/register")
@@ -485,22 +482,22 @@ public class AuthController {
 }
 ```
 
-#### Validation to Implement
+#### Validation à Implémenter
 
-- **Email validation**: Valid email format
-- **Password validation**: Minimum length, complexity
-- **Uniqueness check**: Email not already used
-- **Hashing**: Use BCryptPasswordEncoder
+- **Validation de l'email** : Format d'email valide
+- **Validation du mot de passe** : Longueur minimale, complexité
+- **Vérification d'unicité** : Email non déjà utilisé
+- **Hachage** : Utiliser BCryptPasswordEncoder
 
 ---
 
-### 2. Login Process
+### 2. Processus de Connexion (Login)
 
-**Planned Endpoint**: `POST /api/auth/login`
+**Endpoint Implémenté** : `POST /auth/login`
 
-**Description**: Login allows an existing user to authenticate and obtain a JWT token.
+**Description** : La connexion permet à un utilisateur existant de s'authentifier et d'obtenir un token JWT.
 
-#### Login Process Steps
+#### Étapes du Processus de Connexion
 
 ```
 ┌─────────────┐         ┌──────────────┐         ┌─────────────┐         ┌─────────────┐
@@ -537,7 +534,7 @@ public class AuthController {
        │  Store token           │                       │                       │
 ```
 
-#### Planned Implementation (AuthController)
+#### Implémentation Actuelle (AuthController)
 
 ```java
 @PostMapping("/login")
@@ -561,28 +558,28 @@ public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
 }
 ```
 
-#### Spring Security Authentication Mechanism
+#### Mécanisme d'Authentification Spring Security
 
-Spring Security uses the following process:
-1. **AuthenticationManager**: Coordinates the authentication process
-2. **DaoAuthenticationProvider**: Uses UserDetailsService to load the user
-3. **PasswordEncoder**: Compares the provided password with the stored hash
-4. **SecurityContext**: Stores the Authentication if successful
+Spring Security utilise le processus suivant :
+1. **AuthenticationManager** : Coordonne le processus d'authentification
+2. **DaoAuthenticationProvider** : Utilise UserDetailsService pour charger l'utilisateur
+3. **PasswordEncoder** : Compare le mot de passe fourni avec le hash stocké
+4. **SecurityContext** : Stocke l'Authentication si réussi
 
 ---
 
-### 3. Access to Protected Endpoints
+### 3. Accès aux Endpoints Protégés
 
-**Description**: Once authenticated, the client can access protected endpoints by including the JWT token in the Authorization header.
+**Description** : Une fois authentifié, le client peut accéder aux endpoints protégés en incluant le token JWT dans l'en-tête Authorization.
 
-#### Protected Access Steps
+#### Étapes d'Accès Protégé
 
 ```
 ┌─────────────┐         ┌──────────────┐         ┌─────────────┐         ┌─────────────┐
 │   Client    │         │  JWT Filter  │         │   Service   │         │   Database  │
 └──────┬──────┘         └──────┬───────┘         └──────┬──────┘         └──────┬──────┘
        │                       │                       │                       │
-       │  GET /api/user/profile│                       │                       │
+       │  GET /api/profile       │                       │                       │
        │  Authorization:       │                       │                       │
        │  Bearer <token>        │                       │                       │
        │──────────────────────>│                       │                       │
@@ -614,7 +611,7 @@ Spring Security uses the following process:
        │<──────────────────────│                       │                       │
 ```
 
-#### Planned Implementation (JwtAuthenticationFilter)
+#### Implémentation Actuelle (JwtFilter)
 
 ```java
 @Component
@@ -662,14 +659,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 }
 ```
 
-#### Client Token Usage
+#### Utilisation du Token par le Client
 
 ```javascript
 // Example in JavaScript (Frontend)
 async function getProtectedData() {
     const token = localStorage.getItem('jwtToken');
 
-    const response = await fetch('/api/user/profile', {
+    const response = await fetch('/api/profile', {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -684,11 +681,11 @@ async function getProtectedData() {
 
 ---
 
-### 4. Spring Security Configuration
+### 4. Configuration Spring Security
 
-**Description**: Spring Security configuration defines security rules, filters, and public/protected endpoints.
+**Description** : La configuration Spring Security définit les règles de sécurité, les filtres, et les endpoints publics/protégés.
 
-#### Planned Implementation (SecurityConfiguration)
+#### Implémentation Actuelle (SecurityConfig)
 
 ```java
 @Configuration
@@ -705,8 +702,7 @@ public class SecurityConfiguration {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for REST API
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll() // Public endpoints
-                .requestMatchers("/h2-console/**").permitAll() // Public H2 console
+                .requestMatchers("/auth/**", "/h2-console/**").permitAll() // Public endpoints
                 .anyRequest().authenticated() // All other endpoints protected
             )
             .sessionManagement(session -> session
@@ -738,14 +734,14 @@ public class SecurityConfiguration {
 }
 ```
 
-#### Configuration Explanation
+#### Explication de la Configuration
 
-1. **csrf.disable()**: Disables CSRF protection as REST APIs use JWT tokens
-2. **permitAll()**: Allows access without authentication to specified endpoints
-3. **authenticated()**: Requires authentication for all other endpoints
-4. **STATELESS**: Indicates that the application doesn't use HTTP sessions
-5. **addFilterBefore()**: Adds JWT filter before the default authentication filter
-6. **BCryptPasswordEncoder**: Secure password encoder
+1. **csrf.disable()** : Désactive la protection CSRF car les API REST utilisent des tokens JWT
+2. **permitAll()** : Autorise l'accès sans authentification aux endpoints spécifiés
+3. **authenticated()** : Nécessite une authentification pour tous les autres endpoints
+4. **STATELESS** : Indique que l'application n'utilise pas de sessions HTTP
+5. **addFilterBefore()** : Ajoute le filtre JWT avant le filtre d'authentification par défaut
+6. **BCryptPasswordEncoder** : Encodeur de mot de passe sécurisé
 
 ---
 
@@ -773,33 +769,33 @@ jwt.secret=TXlKV1RTZWNyZXRIaWNoYW1PdWFvdWNoZWhkaGFoaGNIR0d3VVVWQkhZR1NIWVhVVUNCR
 jwt.expiration=3600000
 ```
 
-#### Property Explanation
+#### Explication des Propriétés
 
-**H2 Database**:
-- `spring.datasource.url`: H2 in-memory database connection URL
-- `spring.datasource.driverClassName`: JDBC driver for H2
-- `spring.datasource.username`: Default H2 username
-- `spring.datasource.password`: Default empty password
+**Base de Données H2**:
+- `spring.datasource.url`: URL de connexion à la base de données H2 en mémoire
+- `spring.datasource.driverClassName`: Pilote JDBC pour H2
+- `spring.datasource.username`: Nom d'utilisateur H2 par défaut
+- `spring.datasource.password`: Mot de passe vide par défaut
 
-**JPA Configuration**:
-- `spring.jpa.show-sql=true`: Displays SQL queries in console (useful for debugging)
-- `spring.jpa.hibernate.ddl-auto=update`: Automatically updates database schema
+**Configuration JPA**:
+- `spring.jpa.show-sql=true`: Affiche les requêtes SQL dans la console (utile pour le débogage)
+- `spring.jpa.hibernate.ddl-auto=update`: Met à jour automatiquement le schéma de la base de données
 
-**H2 Console**:
-- `spring.h2.console.enabled=true`: Enables H2 web console
-- `spring.h2.console.path=/h2-console`: Console access path
+**Console H2**:
+- `spring.h2.console.enabled=true`: Active la console web H2
+- `spring.h2.console.path=/h2-console`: Chemin d'accès à la console
 
-**JWT Configuration**:
-- `jwt.secret`: Base64-encoded secret key for signing tokens (MUST be kept secret in production)
-- `jwt.expiration=3600000`: Token validity duration in milliseconds (1 hour = 3600000 ms)
+**Configuration JWT**:
+- `jwt.secret`: Clé secrète encodée en Base64 pour signer les tokens (DOIT être gardée secrète en production)
+- `jwt.expiration=3600000`: Durée de validité du token en millisecondes (1 heure = 3600000 ms)
 
-**Security Note**: In production, the JWT secret key should never be stored in code or versioned configuration files. It should be injected via environment variables or a secret management service.
+**Note de Sécurité** : En production, la clé secrète JWT ne doit jamais être stockée dans le code ou des fichiers de configuration versionnés. Elle devrait être injectée via des variables d'environnement ou un service de gestion des secrets.
 
 ---
 
-### Maven Dependencies (pom.xml)
+### Dépendances Maven (pom.xml)
 
-#### Main Dependencies
+#### Dépendances Principales
 
 ```xml
 <!-- JWT (JJWT) -->
@@ -822,10 +818,10 @@ jwt.expiration=3600000
 </dependency>
 ```
 
-**Explanation**:
-- `jjwt-api`: API for JWT token creation and parsing
-- `jjwt-impl`: API implementation (required at runtime)
-- `jjwt-jackson`: Jackson integration for JSON serialization
+**Explication**:
+- `jjwt-api`: API pour la création et l'analyse des tokens JWT
+- `jjwt-impl`: Implémentation de l'API (requise à l'exécution)
+- `jjwt-jackson`: Intégration Jackson pour la sérialisation JSON
 
 #### Spring Boot Starters
 
@@ -844,10 +840,10 @@ jwt.expiration=3600000
 </dependency>
 ```
 
-**Explanation**:
-- `spring-boot-starter-data-jpa`: Provides JPA and Hibernate for persistence
-- `spring-boot-starter-security`: Spring Security integration
-- `spring-boot-starter-webmvc`: Provides Spring MVC for REST APIs
+**Explication**:
+- `spring-boot-starter-data-jpa`: Fournit JPA et Hibernate pour la persistance
+- `spring-boot-starter-security`: Intégration Spring Security
+- `spring-boot-starter-webmvc`: Fournit Spring MVC pour les API REST
 
 #### Database
 
@@ -881,86 +877,88 @@ jwt.expiration=3600000
 
 ## Current Project Status
 
-### Implemented Components ✅
+### Composants Implémentés ✅
 
-1. **Entity AppUser**: User entity with JPA mapping
-2. **DTOs**: LoginRequest, RegisterRequest, AuthResponse
-3. **UserRepository**: JPA repository with custom methods
-4. **JwtService**: Complete service for JWT token management
-5. **CustomerUserDetailsService**: User loading service
-6. **Configuration application.properties**: Database and JWT configuration
+1. **Entité AppUser** : Entité utilisateur avec mappage JPA
+2. **DTOs** : LoginRequest, RegisterRequest, AuthResponse
+3. **UserRepository** : Repository JPA avec méthodes personnalisées
+4. **JwtService** : Service complet pour la gestion des tokens JWT
+5. **CustomerUserDetailsService** : Service de chargement utilisateur
+6. **Configuration application.properties** : Configuration de la base de données et JWT
+7. **AuthController** : Contrôleur REST pour les endpoints /register et /login
+8. **UserController** : Contrôleur pour les endpoints protégés (/api/hello, /api/profile)
+9. **SecurityConfig** : Configuration Spring Security
+10. **JwtFilter** : Filtre pour intercepter et valider les tokens JWT
+11. **PasswordEncoder** : Bean pour le hachage des mots de passe (BCrypt)
 
-### Missing Components ❌
+### Composants Manquants ❌
 
-1. **AuthController**: REST controller for /register and /login endpoints
-2. **UserController**: Controller for protected endpoints
-3. **SecurityConfiguration**: Spring Security configuration
-4. **JwtAuthenticationFilter**: Filter to intercept and validate JWT tokens
-5. **PasswordEncoder**: Bean for password hashing (BCrypt)
-6. **DTO Validation**: Validation annotations (@Valid, @Email, @Size, etc.)
-7. **Exception Handling**: Global exception handler
-8. **Tests**: Unit and integration tests
+1. **Validation des DTOs** : Annotations de validation (@Valid, @Email, @Size, etc.)
+2. **Gestion des Exceptions** : Gestionnaire global d'exceptions (@ControllerAdvice)
+3. **Tests** : Tests unitaires et tests d'intégration
+4. **Rafraîchissement de Token** : Implémentation des refresh tokens
+5. **Gestion des Rôles** : Implémentation détaillée des rôles (USER, ADMIN)
 
-### Identified Issues in Existing Code ⚠️
+### Problèmes Identifiés dans le Code Existant ⚠️
 
-1. **JwtService.java - Line 20**:
+1. **JwtService.java - Ligne 20**:
    ```java
    @Value("jwt.secret")  // ❌ Incorrect
    ```
-   Should be:
+   Devrait être:
    ```java
    @Value("${jwt.secret}")  // ✅ Correct
    ```
 
 2. **CustomerUserDetailsService.java**:
-   - Missing `@Service` annotation
-   - Spring won't be able to detect and inject this bean automatically
+   - Annotation `@Service` manquante
+   - Spring ne pourra pas détecter et injecter ce bean automatiquement
 
-3. **Confusing method names in JwtService**:
-   - `isTokenExpired(String token, UserDetails)`: Checks if token belongs to user (not expiration)
-   - `isTokenExpired(String token)`: Checks token expiration
-   - Should be renamed for clarity
+3. **Noms de méthodes confus dans JwtService**:
+   - `isTokenExpired(String token, UserDetails)`: Vérifie si le token appartient à l'utilisateur (pas l'expiration)
+   - `isTokenExpired(String token)`: Vérifie l'expiration du token
+   - Devrait être renommé pour plus de clarté
 
-4. **No password hashing**:
-   - Passwords are stored in plain text
-   - Critical security risk
+4. **Pas de hachage de mot de passe**:
+   - Les mots de passe sont stockés en clair
+   - Risque de sécurité critique
 
-5. **No exception handling**:
-   - No try-catch during token parsing
-   - Risk of unhandled exceptions in production
+5. **Pas de gestion des exceptions**:
+   - Pas de try-catch lors de l'analyse du token
+   - Risque d'exceptions non gérées en production
 
 ---
 
-## Security: Analysis and Recommendations
+## Sécurité : Analyse et Recommandations
 
 ### JWT (JSON Web Tokens)
 
-#### Advantages
-- **Stateless**: No need to store sessions on server side
-- **Scalable**: Easy to distribute across multiple servers
-- **Standard**: Standard format (RFC 7519)
-- **Flexible**: Can contain custom claims
+#### Avantages
+- **Stateless** : Pas besoin de stocker les sessions côté serveur
+- **Scalable** : Facile à distribuer sur plusieurs serveurs
+- **Standard** : Format standard (RFC 7519)
+- **Flexible** : Peut contenir des claims personnalisés
 
-#### Disadvantages and Risks
-- **Non-revocable**: Once issued, a token is valid until expiration
-- **Vulnerable if compromised**: If secret key is compromised, all tokens can be forged
-- **Size**: Larger than a simple session ID
-- **Client-side storage**: XSS risk if stored in localStorage
+#### Inconvénients et Risques
+- **Non-révocable** : Une fois émis, un token est valide jusqu'à expiration
+- **Vulnérable si compromis** : Si la clé secrète est compromise, tous les tokens peuvent être forgés
+- **Taille** : Plus grand qu'un simple ID de session
+- **Stockage côté client** : Risque XSS si stocké dans localStorage
 
-#### Best Practices
-1. **Always use HTTPS**: Prevent token interception
-2. **Short expiration**: 15-30 minutes for access tokens
-3. **Refresh Tokens**: Implement refresh tokens with longer expiration
-4. **Secure storage**: Prefer httpOnly cookies over localStorage
-5. **Strict validation**: Verify signature, expiration, and issuer
-6. **Minimal claims**: Store only necessary information in token
+#### Meilleures Pratiques
+1. **Toujours utiliser HTTPS** : Empêche l'interception du token
+2. **Expiration courte** : 15-30 minutes pour les tokens d'accès
+3. **Refresh Tokens** : Implémenter des refresh tokens avec expiration plus longue
+4. **Stockage sécurisé** : Préférer les cookies httpOnly au localStorage
+5. **Validation stricte** : Vérifier la signature, l'expiration et l'émetteur
+6. **Claims minimaux** : Stocker uniquement les informations nécessaires dans le token
 
-### Password
+### Mot de Passe
 
-#### Current Problem
-Passwords are stored in plain text in the database, which represents a critical security risk.
+#### Problème Actuel
+Les mots de passe sont stockés en clair dans la base de données, ce qui représente un risque de sécurité critique.
 
-#### Recommended Solution: BCrypt
+#### Solution Recommandée : BCrypt
 
 ```java
 @Bean
@@ -969,82 +967,82 @@ public PasswordEncoder passwordEncoder() {
 }
 ```
 
-**Why BCrypt?**
-- **Adaptive**: Work factor can be increased to compensate for increasing computing power
-- **Built into Spring Security**: Native support and easy to use
-- **Secure**: Uses automatic salt and is resistant to rainbow table attacks
-- **Industry standard**: Widely adopted and tested
+**Pourquoi BCrypt ?**
+- **Adaptatif** : Le facteur de travail peut être augmenté pour compenser la puissance de calcul croissante
+- **Intégré à Spring Security** : Support natif et facile à utiliser
+- **Sécurisé** : Utilise un salt automatique et résiste aux attaques par rainbow table
+- **Standard industriel** : Large adoption et testé
 
-#### Usage Example
+#### Exemple d'Utilisation
 
 ```java
-// Hashing during registration
+// Hachage lors de l'inscription
 String hashedPassword = passwordEncoder.encode(rawPassword);
 
-// Verification during login
+// Vérification lors de la connexion
 boolean matches = passwordEncoder.matches(rawPassword, hashedPassword);
 ```
 
-### Database
+### Base de Données
 
-#### H2 In-Memory
-- **Advantages**: Fast, easy to configure, no installation required
-- **Disadvantages**: Data lost on restart, not suitable for production
+#### H2 En Mémoire
+- **Avantages** : Rapide, facile à configurer, pas d'installation requise
+- **Inconvénients** : Données perdues au redémarrage, pas adapté pour la production
 
-#### Production Recommendation
-Migrate to a persistent database like PostgreSQL or MySQL:
+#### Recommandation pour la Production
+Migrer vers une base de données persistante comme PostgreSQL ou MySQL :
 
 ```properties
-# Example for PostgreSQL
+# Exemple pour PostgreSQL
 spring.datasource.url=jdbc:postgresql://localhost:5432/securitydb
 spring.datasource.username=postgres
 spring.datasource.password=your_password
 spring.datasource.driver-class-name=org.postgresql.Driver
 ```
 
-### Other Security Considerations
+### Autres Considérations de Sécurité
 
-1. **Input Validation**: Always validate user data
-2. **Rate Limiting**: Limit login attempts to prevent brute force attacks
-3. **Secure Logging**: Never log passwords or sensitive information
-4. **CORS**: Configure correctly for frontend applications
-5. **Security Headers**: Use headers like X-Content-Type-Options, X-Frame-Options
+1. **Validation des Entrées** : Toujours valider les données utilisateur
+2. **Limitation de Taux** : Limiter les tentatives de connexion pour empêcher les attaques par force brute
+3. **Journalisation Sécurisée** : Ne jamais journaliser les mots de passe ou informations sensibles
+4. **CORS** : Configurer correctement pour les applications frontend
+5. **En-têtes de Sécurité** : Utiliser des en-têtes comme X-Content-Type-Options, X-Frame-Options
 
 ---
 
-## Testing and Validation
+## Tests et Validation
 
-### Recommended Unit Tests
+### Tests Unitaires Recommandés
 
 1. **JwtServiceTest**:
-   - Test token generation
-   - Test username extraction
-   - Test expiration validation
-   - Test with invalid tokens
+   - Tester la génération de token
+   - Tester l'extraction du nom d'utilisateur
+   - Tester la validation d'expiration
+   - Tester avec des tokens invalides
 
 2. **CustomerUserDetailsServiceTest**:
-   - Test loading an existing user
-   - Test behavior with non-existent user
-   - Test UserDetails construction
+   - Tester le chargement d'un utilisateur existant
+   - Tester le comportement avec un utilisateur inexistant
+   - Tester la construction de UserDetails
 
 3. **UserRepositoryTest**:
-   - Test findByEmail method
-   - Test existsByEmail method
-   - Test user creation and deletion
+   - Tester la méthode findByEmail
+   - Tester la méthode existsByEmail
+   - Tester la création et suppression d'utilisateur
 
-### Recommended Integration Tests
+### Tests d'Intégration Recommandés
 
 1. **AuthControllerIntegrationTest**:
-   - Test complete registration flow
-   - Test complete login flow
-   - Test errors (email already used, wrong password)
+   - Tester le flux d'inscription complet
+   - Tester le flux de connexion complet
+   - Tester les erreurs (email déjà utilisé, mauvais mot de passe)
 
 2. **SecurityIntegrationTest**:
-   - Test that public endpoints are accessible without token
-   - Test that protected endpoints require a token
-   - Test that invalid tokens are rejected
+   - Tester que les endpoints publics sont accessibles sans token
+   - Tester que les endpoints protégés nécessitent un token
+   - Tester que les tokens invalides sont rejetés
 
-### Test Example (JwtServiceTest)
+### Exemple de Test (JwtServiceTest)
 
 ```java
 @SpringBootTest
@@ -1085,26 +1083,26 @@ class JwtServiceTest {
 
 ---
 
-## Deployment Guide
+## Guide de Déploiement
 
-### Development Environment
+### Environnement de Développement
 
 ```bash
-# Clone the repository
+# Cloner le dépôt
 git clone <repository-url>
 cd JwtSpringApplication
 
-# Run the application
+# Exécuter l'application
 ./mvnw spring-boot:run
 
-# Access the application
+# Accéder à l'application
 # API: http://localhost:8080
-# H2 Console: http://localhost:8080/h2-console
+# Console H2: http://localhost:8080/h2-console
 ```
 
-### Production Configuration
+### Configuration de Production
 
-1. **Environment Variables**:
+1. **Variables d'Environnement**:
 ```bash
 export JWT_SECRET=your_very_long_and_random_secret_key
 export JWT_EXPIRATION=3600000
@@ -1122,13 +1120,13 @@ jwt.secret=${JWT_SECRET}
 jwt.expiration=${JWT_EXPIRATION}
 ```
 
-3. **Production Build**:
+3. **Build de Production**:
 ```bash
 ./mvnw clean package -DskipTests
 java -jar target/JwtSpringApplication-0.0.1-SNAPSHOT.jar --spring.profiles.active=production
 ```
 
-### Docker (Optional)
+### Docker (Optionnel)
 
 ```dockerfile
 FROM openjdk:21-jdk-slim
@@ -1145,103 +1143,83 @@ docker run -p 8080:8080 jwt-spring-app
 
 ---
 
-## Future Improvements
+## Améliorations Futures
 
-### Short Term (High Priority)
+### Court Terme (Haute Priorité)
 
-- [ ] **Fix identified bugs**:
-  - Fix `@Value("jwt.secret")` to `@Value("${jwt.secret}")`
-  - Add `@Service` on CustomerUserDetailsService
-  - Rename confusing methods in JwtService
+- [ ] **Corriger les bugs identifiés**:
+  - Corriger `@Value("jwt.secret")` en `@Value("${jwt.secret}")`
+  - Ajouter `@Service` sur CustomerUserDetailsService
+  - Renommer les méthodes confuses dans JwtService
 
-- [ ] **Implement AuthController**:
-  - POST /api/auth/register endpoint
-  - POST /api/auth/login endpoint
-  - DTO validation
+- [ ] **Validation des DTOs**:
+  - Ajouter @Valid sur les paramètres
+  - Annotations @Email, @Size, @NotBlank
+  - Messages d'erreur personnalisés
 
-- [ ] **Implement SecurityConfiguration**:
-  - SecurityFilterChain configuration
-  - PasswordEncoder bean (BCrypt)
-  - AuthenticationManager bean
+- [ ] **Gestion des Exceptions**:
+  - Global @ControllerAdvice
+  - Exceptions personnalisées
+  - Réponses d'erreur structurées
 
-- [ ] **Implement JwtAuthenticationFilter**:
-  - Token extraction from Authorization header
-  - Token validation
-  - SecurityContext creation
+### Moyen Terme (Priorité Moyenne)
 
-- [ ] **Add password hashing**:
-  - Use BCryptPasswordEncoder
-  - Hash during registration
-  - Verify during login
+- [ ] **Améliorer UserController**:
+  - GET /api/profile endpoint (protégé)
+  - PUT /api/profile endpoint (protégé)
+  - DELETE /api/account endpoint (protégé)
 
-### Medium Term (Medium Priority)
-
-- [ ] **Implement UserController**:
-  - GET /api/user/profile endpoint (protected)
-  - PUT /api/user/profile endpoint (protected)
-  - DELETE /api/user/account endpoint (protected)
-
-- [ ] **Role Management**:
-  - Implement different roles (USER, ADMIN)
-  - Role-specific endpoints
-  - Role-based authorizations
+- [ ] **Gestion des Rôles**:
+  - Implémenter différents rôles (USER, ADMIN)
+  - Endpoints spécifiques aux rôles
+  - Autorisations basées sur les rôles
 
 - [ ] **Refresh Token**:
-  - Implement refresh tokens
-  - POST /api/auth/refresh endpoint
-  - Token rotation
+  - Implémenter les refresh tokens
+  - POST /auth/refresh endpoint
+  - Rotation des tokens
 
-- [ ] **DTO Validation**:
-  - Add @Valid on parameters
-  - @Email, @Size, @NotBlank annotations
-  - Custom error messages
+### Long Terme (Priorité Faible)
 
-- [ ] **Exception Handling**:
-  - Global @ControllerAdvice
-  - Custom exceptions
-  - Structured error responses
+- [ ] **Migrer vers une base de données persistante**:
+  - PostgreSQL ou MySQL
+  - Configuration de production
+  - Migrations de base de données (Flyway/Liquibase)
 
-### Long Term (Low Priority)
+- [ ] **Tests Complets**:
+  - Tests unitaires pour tous les services
+  - Tests d'intégration pour les contrôleurs
+  - Tests de sécurité
 
-- [ ] **Migrate to persistent database**:
-  - PostgreSQL or MySQL
-  - Production configuration
-  - Database migrations (Flyway/Liquibase)
+- [ ] **Limitation de Taux**:
+  - Limiter les tentatives de connexion
+  - Limiter les requêtes par IP
+  - Utiliser Spring Boot Starter pour Resilience4j
 
-- [ ] **Complete Testing**:
-  - Unit tests for all services
-  - Integration tests for controllers
-  - Security tests
-
-- [ ] **Rate Limiting**:
-  - Limit login attempts
-  - Limit requests per IP
-  - Use Spring Boot Starter for Resilience4j
-
-- [ ] **Audit Logging**:
-  - Log successful/failed logins
-  - Log sensitive actions
-  - GDPR compliance
+- [ ] **Journalisation d'Audit**:
+  - Journaliser les connexions réussies/échouées
+  - Journaliser les actions sensibles
+  - Conformité GDPR
 
 - [ ] **OAuth2 / OpenID Connect**:
-  - Third-party authentication support (Google, GitHub)
-  - Integration with identity providers
+  - Support d'authentification tierce (Google, GitHub)
+  - Intégration avec les fournisseurs d'identité
 
-- [ ] **2FA (Two-Factor Authentication)**:
-  - Implement TOTP (Time-based One-Time Password)
-  - SMS or Email for verification code
+- [ ] **2FA (Authentification à Deux Facteurs)**:
+  - Implémenter TOTP (Mot de passe à usage unique basé sur le temps)
+  - SMS ou Email pour le code de vérification
 
 ---
 
-## API Testing with Postman
+## Tests de l'API avec Postman
 
-This section demonstrates how to test the JWT authentication API using Postman.
+Cette section démontre comment tester l'API d'authentification JWT en utilisant Postman.
 
-### 1. User Registration
+### 1. Inscription d'Utilisateur
 
-**Endpoint**: `POST http://localhost:8080/auth/register`
+**Endpoint** : `POST http://localhost:8080/auth/register`
 
-**Request Body**:
+**Corps de la Requête** :
 ```json
 {
   "email": "hicham.ouaouche@gmail.com",
@@ -1249,22 +1227,22 @@ This section demonstrates how to test the JWT authentication API using Postman.
 }
 ```
 
-**Response**:
+**Réponse** :
 ```json
 "Utilisateur cree"
 ```
 
-![Registration](scren/1.png)
+![Inscription](scren/1.png)
 
-After successful registration, the user is stored in the H2 database:
+Après une inscription réussie, l'utilisateur est stocké dans la base de données H2 :
 
-![H2 Database - Users Table](scren/2.png)
+![Base de données H2 - Table Users](scren/2.png)
 
-### 2. User Login
+### 2. Connexion d'Utilisateur
 
-**Endpoint**: `POST http://localhost:8080/auth/login`
+**Endpoint** : `POST http://localhost:8080/auth/login`
 
-**Request Body**:
+**Corps de la Requête** :
 ```json
 {
   "email": "hicham.ouaouche@gmail.com",
@@ -1272,33 +1250,33 @@ After successful registration, the user is stored in the H2 database:
 }
 ```
 
-**Response**:
+**Réponse** :
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoaWNoYW0ub3VhdWNoZUBnbWFpbC5jb20iLCJpYXQiOjE3OTIwODYwMjEsImV4cCI6MTc5MjE3MjQyMX0.f63zsBY40QERIzVJojcxOCISPV30x1PLz2IGh16bYms"
 }
 ```
 
-![Login](scren/3.png)
+![Connexion](scren/3.png)
 
-### 3. Access Profile Endpoint
+### 3. Accès à l'Endpoint Profile
 
-**Endpoint**: `GET http://localhost:8080/user/profile`
+**Endpoint** : `GET http://localhost:8080/user/profile`
 
-**Headers**:
+**En-têtes** :
 ```
-Authorization: Bearer <your-jwt-token>
+Authorization: Bearer <votre-token-jwt>
 ```
 
 ![Profile](scren/4.png)
 
-### 4. Access Hello Endpoint
+### 4. Accès à l'Endpoint Hello
 
-**Endpoint**: `GET http://localhost:8080/hello`
+**Endpoint** : `GET http://localhost:8080/hello`
 
-**Headers**:
+**En-têtes** :
 ```
-Authorization: Bearer <your-jwt-token>
+Authorization: Bearer <votre-token-jwt>
 ```
 
 ![Hello](scren/5.png)
@@ -1307,38 +1285,38 @@ Authorization: Bearer <your-jwt-token>
 
 ## Conclusion
 
-JwtSpringApplication is an educational project demonstrating the implementation of a JWT authentication system with Spring Boot. While the foundations are solid, the project still requires several components to be functional and secure in production.
+JwtSpringApplication est un projet éducatif démontrant l'implémentation d'un système d'authentification JWT avec Spring Boot. Bien que les fondations soient solides, le projet nécessite encore plusieurs composants pour être fonctionnel et sécurisé en production.
 
-### Strengths
+### Points Forts
 
-- ✅ Clear and well-structured architecture
-- ✅ Use of standards (JWT, Spring Security, JPA)
-- ✅ Readable and maintainable code
-- ✅ Well-implemented JWT services
+- ✅ Architecture claire et bien structurée
+- ✅ Utilisation de standards (JWT, Spring Security, JPA)
+- ✅ Code lisible et maintenable
+- ✅ Services JWT bien implémentés
 
-### Areas for Improvement
+### Zones d'Amélioration
 
-- ❌ Missing REST controllers
-- ❌ Incomplete Spring Security configuration
-- ❌ No password hashing
-- ❌ Minor bugs in existing code
-- ❌ No tests
+- ❌ Contrôleurs REST manquants
+- ❌ Configuration Spring Security incomplète
+- ❌ Aucun hachage de mot de passe
+- ❌ Bugs mineurs dans le code existant
+- ❌ Aucun test
 
-### Recommendations
+### Recommandations
 
-1. **Prioritize security**: Implement BCrypt for passwords before any other feature
-2. **Complete authentication**: Implement AuthController and SecurityConfiguration
-3. **Add tests**: Write unit and integration tests
-4. **Fix bugs**: Resolve identified issues in existing code
-5. **Document API**: Use Swagger/OpenAPI to document endpoints
+1. **Prioriser la sécurité** : Implémenter BCrypt pour les mots de passe avant toute autre fonctionnalité
+2. **Compléter l'authentification** : Implémenter AuthController et SecurityConfiguration
+3. **Ajouter des tests** : Écrire des tests unitaires et d'intégration
+4. **Corriger les bugs** : Résoudre les problèmes identifiés dans le code existant
+5. **Documenter l'API** : Utiliser Swagger/OpenAPI pour documenter les endpoints
 
-This project provides an excellent foundation for understanding JWT authentication with Spring Security and can be extended to become a complete and secure production application.
+Ce projet fournit une excellente base pour comprendre l'authentification JWT avec Spring Security et peut être étendu pour devenir une application de production complète et sécurisée.
 
 ---
 
-## Author
+## Auteur
 
 **Hicham Ouaouche**
 
-Project completed as part of the Distributed Systems Security course (SDIA - 2nd Year) at ENSET Mohammedia.
+Projet réalisé dans le cadre du cours de Sécurité des Systèmes Distribués (SDIA - 2ème année) à l'ENSET Mohammedia.
 
