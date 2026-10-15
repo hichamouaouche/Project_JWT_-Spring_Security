@@ -1233,6 +1233,78 @@ docker run -p 8080:8080 jwt-spring-app
 
 ---
 
+## API Testing with Postman
+
+This section demonstrates how to test the JWT authentication API using Postman.
+
+### 1. User Registration
+
+**Endpoint**: `POST http://localhost:8080/auth/register`
+
+**Request Body**:
+```json
+{
+  "email": "hicham.ouaouche@gmail.com",
+  "password": "1234"
+}
+```
+
+**Response**:
+```json
+"Utilisateur cree"
+```
+
+![Registration](scren/1.png)
+
+After successful registration, the user is stored in the H2 database:
+
+![H2 Database - Users Table](scren/2.png)
+
+### 2. User Login
+
+**Endpoint**: `POST http://localhost:8080/auth/login`
+
+**Request Body**:
+```json
+{
+  "email": "hicham.ouaouche@gmail.com",
+  "password": "1234"
+}
+```
+
+**Response**:
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoaWNoYW0ub3VhdWNoZUBnbWFpbC5jb20iLCJpYXQiOjE3OTIwODYwMjEsImV4cCI6MTc5MjE3MjQyMX0.f63zsBY40QERIzVJojcxOCISPV30x1PLz2IGh16bYms"
+}
+```
+
+![Login](scren/3.png)
+
+### 3. Access Profile Endpoint
+
+**Endpoint**: `GET http://localhost:8080/user/profile`
+
+**Headers**:
+```
+Authorization: Bearer <your-jwt-token>
+```
+
+![Profile](scren/4.png)
+
+### 4. Access Hello Endpoint
+
+**Endpoint**: `GET http://localhost:8080/hello`
+
+**Headers**:
+```
+Authorization: Bearer <your-jwt-token>
+```
+
+![Hello](scren/5.png)
+
+---
+
 ## Conclusion
 
 JwtSpringApplication is an educational project demonstrating the implementation of a JWT authentication system with Spring Boot. While the foundations are solid, the project still requires several components to be functional and secure in production.

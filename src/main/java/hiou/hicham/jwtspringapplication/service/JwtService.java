@@ -14,18 +14,21 @@ import javax.crypto.SecretKey;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-
+import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import javax.crypto.SecretKey;
 @Service
 public class JwtService {
-    @Value("jwt.secret")
+    @Value("${jwt.secret}")
     private String jwtSecret;
     @Value("${jwt.expiration}")
     private Long jwtExpiration;
 
+
     private SecretKey getSecretKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
+
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
@@ -45,7 +48,7 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
     }
-    public boolean isTokenExpired(String token, UserDetails userDetails){
+    public boolean isTokenValid(String token, UserDetails userDetails){
         String userName = extractUsername(token);
         return userDetails.getUsername().equals(userName);
     }
